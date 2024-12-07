@@ -1,0 +1,63 @@
+﻿@page "/"
+@using KfkAdmin.Interfaces.Providers
+@using KfkAdmin.Models
+@rendermode InteractiveServer
+
+<PageTitle>Home</PageTitle>
+
+<table class="table table-bordered table-hover">
+    <thead>
+    <tr>
+        <th></th>
+        <th>Наименование</th>
+        <th>Кол-во партиций</th>
+        <th>Фактор репликации</th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (topics is { Count: > 0 })
+    {
+        @foreach (var topic in topics)
+        {
+            var isChildShow = rowStates.ContainsKey(topic.Name) && rowStates[topic.Name];
+            
+            <tr>
+                <td>
+                    <button class="btn btn-primary btn-sm" @onclick="() => { rowStates[topic.Name] = !isChildShow; }">
+                        <i class="bi bi-arrow-bar-down"></i>
+                    </button>
+                </td>
+                <td>@topic.Name</td>
+                <td>@topic.PartitionCount</td>
+                <td>@topic.ReplicationFactor</td>
+            </tr>
+            
+            @if (isChildShow)
+            {
+                @foreach (var partition in topic.Partitions)
+                {
+                    <tr>
+                        <td colspan="2">@partition.Id</td>
+                    </tr>
+                }
+            }
+        }
+    }
+    </tbody>
+</table>
+
+@code
+{
+    [Inject] private IKafkaServiceProvider _serviceProvider { get; set; }
+
+    private List<Topic> topics;
+    
+    private Dictionary<string, bool> rowStates = new();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        topics = await _serviceProvider.TopicService.GetAllAsync();
+    }
+}

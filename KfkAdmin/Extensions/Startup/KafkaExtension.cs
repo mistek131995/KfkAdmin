@@ -1,0 +1,26 @@
+﻿using Confluent.Kafka;
+using KfkAdmin.Interfaces.Providers;
+using KfkAdmin.Providers.Kafka;
+using ServiceProvider = KfkAdmin.Providers.Kafka.ServiceProvider;
+
+namespace KfkAdmin.Extensions.Startup;
+
+public static class KafkaExtension
+{
+    public static void AddKafkaExtension(this IServiceCollection services)
+    {
+        var host = Environment.GetEnvironmentVariable("KafkaHost");
+        
+        services.AddSingleton<IAdminClient>(_ =>
+        {
+            var config = new AdminClientConfig
+            {
+                BootstrapServers = host
+            };
+            return new AdminClientBuilder(config).Build();
+        });
+
+        services.AddScoped<IKafkaRepositoryProvider, RepositoryProvider>();
+        services.AddScoped<IKafkaServiceProvider, ServiceProvider>();
+    }
+}

@@ -1,0 +1,15 @@
+﻿@page "/add-edit-topic/{topicName?}"
+
+@if (string.IsNullOrEmpty(TopicName))
+{
+    <h3>Создание нового топика</h3>
+}
+else
+{
+    <h3>Редактирование топика - @TopicName</h3>
+}
+
+@code {
+    [Parameter]
+    public string TopicName { get; set; } 
+}
