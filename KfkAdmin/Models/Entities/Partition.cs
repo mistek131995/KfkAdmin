@@ -1,4 +1,4 @@
-﻿namespace KfkAdmin.Models;
+﻿namespace KfkAdmin.Models.Entities;
 
 public class Partition
 {

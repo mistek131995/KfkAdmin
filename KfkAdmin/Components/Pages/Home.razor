@@ -1,6 +1,6 @@
 ﻿@page "/"
 @using KfkAdmin.Interfaces.Providers
-@using KfkAdmin.Models
+@using KfkAdmin.Models.Entities
 @rendermode InteractiveServer
 
 <PageTitle>Home</PageTitle>
@@ -8,7 +8,11 @@
 <table class="table table-bordered table-hover">
     <thead>
     <tr>
-        <th></th>
+        <th>
+            <a class="btn btn-success btn-sm" href="/add-topic/">
+                <i class="bi bi-plus-square"></i>
+            </a>
+        </th>
         <th>Наименование</th>
         <th>Кол-во партиций</th>
         <th>Фактор репликации</th>
@@ -24,7 +28,16 @@
             <tr>
                 <td>
                     <button class="btn btn-primary btn-sm" @onclick="() => { rowStates[topic.Name] = !isChildShow; }">
-                        <i class="bi bi-arrow-bar-down"></i>
+                        <i class="bi bi-chevron-double-down"></i>
+                    </button>
+                    <a class="btn btn-primary btn-sm" href="/add-edit-topic/@topic.Name">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <button class="btn btn-primary btn-sm me-3" @onclick="() => { rowStates[topic.Name] = !isChildShow; }">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                    <button class="btn btn-danger btn-sm">
+                        <i class="bi bi-trash"></i>
                     </button>
                 </td>
                 <td>@topic.Name</td>

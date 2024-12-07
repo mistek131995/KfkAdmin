@@ -1,6 +1,8 @@
-﻿using KfkAdmin.Interfaces.Providers;
+﻿using System.Data;
+using KfkAdmin.Interfaces.Providers;
 using KfkAdmin.Interfaces.Services;
 using KfkAdmin.Models;
+using KfkAdmin.Models.Entities;
 using static KfkAdmin.Interfaces.Services.ITopicService;
 
 namespace KfkAdmin.Domain.Services;
@@ -10,16 +12,22 @@ public class TopicService(IKafkaRepositoryProvider repositoryProvider) : ITopicS
     public async Task<List<Topic>> GetAllAsync() => 
         await repositoryProvider.TopicRepository.GetAllAsync();
 
-    public async Task CreateTopicAsync(TopicDto topicDto)
+    public async Task<Topic> GetByNameAsync(string name)
     {
-        var name = topicDto.Name.Trim().Replace(" ", "_");
+        var topic = await repositoryProvider.TopicRepository.GetByNameAsync(name) ?? 
+                    throw new NullReferenceException("Топик не найден");
         
-        await repositoryProvider.TopicRepository.CreateAsync(new Topic()
-        {
-            Name = name,
-            PartitionCount = topicDto.PartitionCount,
-            ReplicationFactor = topicDto.ReplicationFactor,
-            IsInternal = topicDto.IsInternal,
-        });
+        return topic;
+    }
+
+    public async Task CreateTopicAsync(Topic topic)
+    {
+        var name = topic.Name.Trim().Replace(" ", "_");
+        var existingTopic = await repositoryProvider.TopicRepository.GetByNameAsync(name);
+        
+        if(existingTopic != null)
+            throw new DuplicateNameException("Топик с таким именем уже существует.");
+            
+        await repositoryProvider.TopicRepository.CreateAsync(topic);
     }
 }
