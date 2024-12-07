@@ -1,39 +1,21 @@
 ﻿@page "/view-topic/{topicName}"
 @using KfkAdmin.Interfaces.Providers
+@using KfkAdmin.Components.Pages.ViewTopic.Components
 @rendermode InteractiveServer
 
 <h3>Просмотр топика - @TopicName</h3>
 
-
-
-<div class="d-flex">
-    <button class="btn btn-success" @onclick="SwitchSendMessageFormVisible">
-        Отправить сообщение
-    </button>
-</div>
-
-@if (IsSendMessageFormShow)
-{
-    <div>Test</div>
-}
-
+<SendMessageForm TopicName="@TopicName"/>
 
 @code {
     [Parameter] public string TopicName { get; set; }
 
     [Inject] public IKafkaServiceProvider serviceProvider { get; set; }
-
-    private bool IsSendMessageFormShow = false;
     
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
         //var test = await serviceProvider.MessageService.GetByTopicAsync(TopicName);
-    }
-
-    private void SwitchSendMessageFormVisible()
-    {
-        IsSendMessageFormShow = !IsSendMessageFormShow;
     }
 }

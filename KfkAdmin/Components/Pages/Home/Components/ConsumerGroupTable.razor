@@ -1,0 +1,52 @@
+﻿@using KfkAdmin.Interfaces.Providers
+@using KfkAdmin.Models.Entities
+@rendermode InteractiveServer
+
+<h3 class="mb-2">Группы потребителей</h3>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Группа</th>
+            <th>Тип</th>
+            <th>Состояние</th>
+            <th>Простая группа</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (_consumerGroups is { Count: > 0 })
+        {
+            @foreach (var consumerGroup in _consumerGroups)
+            {
+                <tr>
+                    <td>@consumerGroup.GroupId</td>
+                    <td>@consumerGroup.Type</td>
+                    <td>@consumerGroup.State</td>
+                    <td>@consumerGroup.IsSimpleConsumerGroup</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" class="text-center">
+                    Группы потребителей не найдены
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [Inject] private IKafkaServiceProvider _serviceProvider { get; set; }
+    
+    private List<ConsumerGroup> _consumerGroups { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        _consumerGroups = await _serviceProvider.ConsumerGroupService.GetAll();
+    }
+
+}

@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Blazor.Bootstrap" Version="3.2.0" />
       <PackageReference Include="Confluent.Kafka" Version="2.6.1" />
     </ItemGroup>
 

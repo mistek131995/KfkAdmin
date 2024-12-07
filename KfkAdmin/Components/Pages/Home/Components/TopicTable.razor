@@ -1,0 +1,61 @@
+﻿@using KfkAdmin.Interfaces.Providers
+@using KfkAdmin.Models.Entities
+@rendermode InteractiveServer
+
+<h3 class="mb-2">Топики</h3>
+
+
+<table class="table table-bordered table-hover">
+    <thead>
+    <tr>
+        <th></th>
+        <th>Наименование</th>
+        <th>Кол-во партиций</th>
+        <th>Фактор репликации</th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (topics is { Count: > 0 })
+    {
+        @foreach (var topic in topics)
+        {
+
+            <tr>
+                <td>
+                    <a class="btn btn-primary btn-sm me-3" href="/view-topic/@topic.Name">
+                        <i class="bi bi-eye"></i>
+                    </a>
+                    <button class="btn btn-danger btn-sm" @onclick="async () => await DeleteTopicHandlerAsync(topic.Name)">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+                <td>@topic.Name</td>
+                <td>@topic.PartitionCount</td>
+                <td>@topic.ReplicationFactor</td>
+            </tr>
+        }
+    }
+    </tbody>
+</table>
+
+
+@code
+{
+    [Inject] private IKafkaServiceProvider _serviceProvider { get; set; }
+
+    private List<Topic> topics;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        topics = await _serviceProvider.TopicService.GetAllAsync();
+    }
+
+    private async Task DeleteTopicHandlerAsync(string name)
+    {
+        await _serviceProvider.TopicService.DeleteTopicAsync(name);
+        
+        topics = await _serviceProvider.TopicService.GetAllAsync();
+    }
+}
