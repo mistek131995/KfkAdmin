@@ -26,4 +26,6 @@ public class ServiceProvider(IServiceProvider serviceProvider) : IKafkaServicePr
     }
     
     public ITopicService TopicService => Get<TopicService>();
+    public IMessageService MessageService => Get<MessageService>();
+    public IConsumerGroupService ConsumerGroupService => Get<ConsumerGroupService>();
 }

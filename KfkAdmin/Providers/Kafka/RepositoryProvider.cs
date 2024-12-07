@@ -26,4 +26,6 @@ public class RepositoryProvider(IServiceProvider serviceProvider) : IKafkaReposi
     }
     
     public ITopicRepository TopicRepository => Get<TopicRepository>();
+    public IMessageRepository MessageRepository => Get<MessageRepository>();
+    public IConsumerGroupRepository ConsumerGroupRepository => Get<ConsumerGroupRepository>();
 }

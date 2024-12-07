@@ -10,4 +10,5 @@ public interface ITopicService : IBaseKafkaService
     Task<Topic> GetByNameAsync(string name);
     
     Task CreateTopicAsync(Topic topic);
+    Task DeleteTopicAsync(string name);
 }

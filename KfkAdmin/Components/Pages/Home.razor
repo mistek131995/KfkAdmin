@@ -1,21 +1,25 @@
 ﻿@page "/"
+@using BlazorBootstrap
 @using KfkAdmin.Interfaces.Providers
 @using KfkAdmin.Models.Entities
 @rendermode InteractiveServer
 
 <PageTitle>Home</PageTitle>
 
+@*Таблица с топиками*@
 <table class="table table-bordered table-hover">
     <thead>
     <tr>
         <th>
             <a class="btn btn-success btn-sm" href="/add-topic/">
                 <i class="bi bi-plus-square"></i>
+                <span class="ms-2">Добавить топик</span>
             </a>
         </th>
         <th>Наименование</th>
         <th>Кол-во партиций</th>
         <th>Фактор репликации</th>
+        <th>Кол-во групп</th>
     </tr>
     </thead>
     <tbody>
@@ -30,13 +34,10 @@
                     <button class="btn btn-primary btn-sm" @onclick="() => { rowStates[topic.Name] = !isChildShow; }">
                         <i class="bi bi-chevron-double-down"></i>
                     </button>
-                    <a class="btn btn-primary btn-sm" href="/add-edit-topic/@topic.Name">
-                        <i class="bi bi-pencil"></i>
-                    </a>
-                    <button class="btn btn-primary btn-sm me-3" @onclick="() => { rowStates[topic.Name] = !isChildShow; }">
+                    <a class="btn btn-primary btn-sm me-3" href="/view-topic/@topic.Name">
                         <i class="bi bi-eye"></i>
-                    </button>
-                    <button class="btn btn-danger btn-sm">
+                    </a>
+                    <button class="btn btn-danger btn-sm" @onclick="async () => await DeleteTopicHandlerAsync(topic.Name)">
                         <i class="bi bi-trash"></i>
                     </button>
                 </td>
@@ -47,6 +48,9 @@
             
             @if (isChildShow)
             {
+                <tr>
+                    <th colspan="2">Партиция</th>
+                </tr>
                 @foreach (var partition in topic.Partitions)
                 {
                     <tr>
@@ -59,11 +63,17 @@
     </tbody>
 </table>
 
+@*Таблица с группами*@
+<Modal @ref="modal" />
+
+<Button Color="ButtonColor.Primary" @onclick="ShowEmployeeComponent">Show Employee Component</Button>
+
 @code
 {
     [Inject] private IKafkaServiceProvider _serviceProvider { get; set; }
 
     private List<Topic> topics;
+    private List<ConsumerGroup> consumerGroups;
     
     private Dictionary<string, bool> rowStates = new();
     
@@ -72,5 +82,22 @@
         await base.OnInitializedAsync();
 
         topics = await _serviceProvider.TopicService.GetAllAsync();
+        consumerGroups = await _serviceProvider.ConsumerGroupService.GetAll();
+    }
+
+    private async Task DeleteTopicHandlerAsync(string name)
+    {
+        await _serviceProvider.TopicService.DeleteTopicAsync(name);
+        
+        topics = await _serviceProvider.TopicService.GetAllAsync();
+    }
+    
+    private Modal modal = default!;
+
+    private async Task ShowEmployeeComponent()
+    {
+        var parameters = new Dictionary<string, object>();
+        parameters.Add("EmployeeId", 321);
+        await modal.ShowAsync<EmployeeDemoComponent1>(title: "Employee Details", parameters: parameters);
     }
 }

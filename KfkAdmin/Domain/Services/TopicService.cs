@@ -30,4 +30,7 @@ public class TopicService(IKafkaRepositoryProvider repositoryProvider) : ITopicS
             
         await repositoryProvider.TopicRepository.CreateAsync(topic);
     }
+
+    public async Task DeleteTopicAsync(string name) => 
+        await repositoryProvider.TopicRepository.DeleteAsync(name);
 }
