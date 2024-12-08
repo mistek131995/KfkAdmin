@@ -15,10 +15,6 @@
             <div class="modal-body">
                 @ChildContent
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" @onclick="Close">Закрыть</button>
-                <button type="button" class="btn btn-primary" @onclick="OnConfirm">Сохранить</button>
-            </div>
         </div>
     </div>
     <div class="modal-backdrop fade @(IsVisible ? "show" : "")"></div>
@@ -27,7 +23,6 @@
 @code {
     [Parameter] public string Title { get; set; } = "Заголовок";
     [Parameter] public RenderFragment? ChildContent { get; set; }
-    [Parameter] public EventCallback OnConfirm { get; set; }
     [Parameter] public EventCallback OnClose { get; set; }
 
     private bool IsVisible { get; set; }
@@ -48,12 +43,6 @@
     private async Task Close()
     {
         await OnClose.InvokeAsync();
-        Hide();
-    }
-
-    private async Task OnConfirmClick()
-    {
-        await OnConfirm.InvokeAsync();
         Hide();
     }
 }

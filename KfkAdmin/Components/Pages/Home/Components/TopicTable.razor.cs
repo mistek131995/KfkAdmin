@@ -12,7 +12,12 @@ public partial class TopicTable(IKafkaRepositoryProvider repositoryProvider) : C
     {
         await base.OnInitializedAsync();
 
-        topics = await repositoryProvider.TopicRepository.GetAllAsync();
+        await LoadTopicsAsync();
+    }
+
+    private async Task LoadTopicsAsync()
+    {
+        topics = await repositoryProvider.TopicRepository.GetAllAsync();    
     }
     
     private async Task DeleteTopicHandlerAsync(string name)
