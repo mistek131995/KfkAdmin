@@ -2,11 +2,12 @@
 
 <table class="table table-hover table-bordered">
     <thead>
-        <tr>
-            <th>ID</th>
-            <th>Хост</th>
-            <th>Количество партиций</th>
-        </tr>
+    <tr>
+        <th></th>
+        <th>ID</th>
+        <th>Хост</th>
+        <th>Количество партиций</th>
+    </tr>
     </thead>
     <tbody>
         @if (viewModel is { Count: > 0 })
@@ -14,11 +15,12 @@
             @foreach (var broker in viewModel)
             {
                 <tr>
+                    <td></td>
                     <td>@broker.BrokerId</td>
                     <td>@broker.Host : @broker.Port</td>
                     <td>
-                        @broker.PartitionCount 
-                        
+                        @broker.PartitionCount
+
                         @if (broker.PartitionPercent > 0)
                         {
                             <span>(@broker.PartitionPercent%)</span>
