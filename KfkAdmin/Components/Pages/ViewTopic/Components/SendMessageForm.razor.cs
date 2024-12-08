@@ -1,5 +1,5 @@
-﻿using KfkAdmin.Components.Utils.Modal;
-using KfkAdmin.Models.DTOs;
+﻿using System.ComponentModel.DataAnnotations;
+using KfkAdmin.Components.Utils.Modal;
 using Microsoft.AspNetCore.Components;
 
 namespace KfkAdmin.Components.Pages.ViewTopic.Components;
@@ -10,7 +10,7 @@ public partial class SendMessageForm : ComponentBase
     
     private Modal? ModalInstance;
     
-    private SendMessageFormDto model = new ();
+    private SendMessageFormViewModel model = new ();
 
     private async Task SendMessageFormHandler()
     {
@@ -33,5 +33,13 @@ public partial class SendMessageForm : ComponentBase
     {
         Console.WriteLine("Изменения отменены.");
         return Task.CompletedTask;
+    }
+
+    private class SendMessageFormViewModel
+    {
+        public string Key { get; set; }
+        [Required(ErrorMessage = "Сообщение обязательно к заполнению")]
+        public string Value { get; set; }
+        public string Headers { get; set; }
     }
 }

@@ -1,5 +1,4 @@
 ﻿@page "/view-topic/{topicName}"
-@using KfkAdmin.Interfaces.Providers
 @using KfkAdmin.Components.Pages.ViewTopic.Components
 @rendermode InteractiveServer
 
@@ -9,13 +8,9 @@
 
 @code {
     [Parameter] public string TopicName { get; set; }
-
-    [Inject] public IKafkaServiceProvider serviceProvider { get; set; }
     
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-
-        //var test = await serviceProvider.MessageService.GetByTopicAsync(TopicName);
     }
 }

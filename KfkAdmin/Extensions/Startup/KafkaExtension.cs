@@ -1,7 +1,6 @@
 ﻿using Confluent.Kafka;
 using KfkAdmin.Interfaces.Providers;
 using KfkAdmin.Providers.Kafka;
-using ServiceProvider = KfkAdmin.Providers.Kafka.ServiceProvider;
 
 namespace KfkAdmin.Extensions.Startup;
 
@@ -22,6 +21,5 @@ public static class KafkaExtension
         });
 
         services.AddScoped<IKafkaRepositoryProvider, RepositoryProvider>();
-        services.AddScoped<IKafkaServiceProvider, ServiceProvider>();
     }
 }
