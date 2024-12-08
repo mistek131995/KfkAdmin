@@ -9,13 +9,14 @@ public static class KafkaExtension
 {
     public static void AddKafkaExtension(this IServiceCollection services)
     {
-        var host = Environment.GetEnvironmentVariable("KafkaHost");
+        //var host = Environment.GetEnvironmentVariable("KafkaHost");
         
         services.AddSingleton<IAdminClient>(_ =>
         {
             var config = new AdminClientConfig
             {
-                BootstrapServers = host
+                //BootstrapServers = host
+                BootstrapServers = "localhost:9092,localhost:9093"
             };
             return new AdminClientBuilder(config).Build();
         });

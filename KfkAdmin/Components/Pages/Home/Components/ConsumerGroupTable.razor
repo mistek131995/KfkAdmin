@@ -36,17 +36,3 @@
         }
     </tbody>
 </table>
-
-@code {
-    [Inject] private IKafkaServiceProvider _serviceProvider { get; set; }
-    
-    private List<ConsumerGroup> _consumerGroups { get; set; }
-    
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-
-        _consumerGroups = await _serviceProvider.ConsumerGroupService.GetAll();
-    }
-
-}

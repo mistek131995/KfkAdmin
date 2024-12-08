@@ -4,6 +4,12 @@
 
 <h3 class="mb-2">Топики</h3>
 
+<div class="d-flex mb-3 p-2 border border-1 rounded-1">
+    <a class="btn btn-success btn-sm" href="/add-topic/">
+        <i class="bi bi-plus-square"></i>
+        <span class="ms-2">Добавить топик</span>
+    </a>
+</div>
 
 <table class="table table-bordered table-hover">
     <thead>
@@ -37,25 +43,3 @@
     }
     </tbody>
 </table>
-
-
-@code
-{
-    [Inject] private IKafkaServiceProvider _serviceProvider { get; set; }
-
-    private List<Topic> topics;
-    
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-
-        topics = await _serviceProvider.TopicService.GetAllAsync();
-    }
-
-    private async Task DeleteTopicHandlerAsync(string name)
-    {
-        await _serviceProvider.TopicService.DeleteTopicAsync(name);
-        
-        topics = await _serviceProvider.TopicService.GetAllAsync();
-    }
-}
