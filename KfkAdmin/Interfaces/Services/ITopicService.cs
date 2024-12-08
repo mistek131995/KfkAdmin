@@ -1,14 +1,7 @@
-﻿using KfkAdmin.Interfaces.Common;
-using KfkAdmin.Models;
-using KfkAdmin.Models.Entities;
+﻿namespace KfkAdmin.Interfaces.Services;
 
-namespace KfkAdmin.Interfaces.Services;
-
-public interface ITopicService : IBaseKafkaService
+public interface ITopicService
 {
-    Task<List<Topic>> GetAllAsync();
-    Task<Topic> GetByNameAsync(string name);
-    
-    Task CreateTopicAsync(Topic topic);
-    Task DeleteTopicAsync(string name);
+    Task TransferDataAsync(string fromName, string toName);
+    Task RenameAsync(string oldName, string newName);
 }

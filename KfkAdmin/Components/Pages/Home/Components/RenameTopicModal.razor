@@ -1,0 +1,26 @@
+﻿@using KfkAdmin.Components.Utils.Modal
+<button class="btn btn-primary btn-sm" @onclick="() => { modal.Show(); }">
+    <i class="bi bi-pencil-fill"></i>
+</button>
+
+<Modal @ref="modal" Title="Переименовать топик">
+    <EditForm Model="@modalForm" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        
+        <div>
+            <label>Старое имя:</label>
+            <InputText class="form-control" @bind-Value="OldName" disabled="true"/>
+        </div>
+
+        <div>
+            <label>Новое имя:</label>
+            <InputText class="form-control" @bind-Value="modalForm.NewName"/>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn btn-success" type="submit">Сохранить</button>
+            <button class="btn btn-danger">Закрыть</button>
+        </div>
+    </EditForm>
+</Modal>

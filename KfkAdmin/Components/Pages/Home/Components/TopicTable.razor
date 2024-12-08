@@ -22,7 +22,6 @@
     {
         @foreach (var topic in topics)
         {
-
             <tr>
                 <td>
                     <a class="btn btn-primary btn-sm me-3" href="/view-topic/@topic.Name">
@@ -32,7 +31,12 @@
                         <i class="bi bi-trash"></i>
                     </button>
                 </td>
-                <td>@topic.Name</td>
+                <td>
+                    <div class="d-flex justify-content-between">
+                        <span>@topic.Name</span>
+                        <RenameTopicModal OldName="@topic.Name"/>
+                    </div>
+                </td>
                 <td>@topic.PartitionCount</td>
                 <td>@topic.ReplicationFactor</td>
             </tr>

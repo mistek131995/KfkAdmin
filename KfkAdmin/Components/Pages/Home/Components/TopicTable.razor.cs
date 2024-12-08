@@ -26,4 +26,11 @@ public partial class TopicTable(IKafkaRepositoryProvider repositoryProvider) : C
         
         topics = await repositoryProvider.TopicRepository.GetAllAsync();
     }
+
+    private async Task SaveRenameAsync(string name)
+    {
+        Console.WriteLine("Test");
+        
+        await Task.CompletedTask;
+    }
 }
