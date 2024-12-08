@@ -15,13 +15,33 @@ public class TopicRepository(IAdminClient adminClient) : ITopicRepository
         return metadata.Topics.Select(topic => new Topic()
         {
             Name = topic.Topic, 
+            BrokerIds = topic.Partitions.Select(x => x.Leader).Distinct().ToList(),
             PartitionCount = topic.Partitions.Count, 
-            ReplicationFactor = (short)(topic.Partitions.FirstOrDefault()?.Replicas.Length ?? 0),
-            Partitions = topic.Partitions.Select(partition => new Partition()
-            {
-                Id = partition.PartitionId,
-            }).ToList()
+            ReplicationFactor = (short)(topic.Partitions.FirstOrDefault()?.Replicas.Length ?? 0)
         }).ToList();
+    }
+
+    public async Task<List<Topic>> GetByBrokerIdAsync(int brokerId)
+    {
+        return await Task.Run(() =>
+        {
+            var metadata = adminClient.GetMetadata(TimeSpan.FromSeconds(10));
+
+            var topics = new List<Topic>();
+
+            foreach (var topic in metadata.Topics.Where(x => x.Partitions.Any(p => p.Leader == brokerId)))
+            {
+                topics.Add(new Topic()
+                {
+                    Name = topic.Topic, 
+                    BrokerIds = topic.Partitions.Select(x => x.Leader).Distinct().ToList(),
+                    PartitionCount = topic.Partitions.Count, 
+                    ReplicationFactor = (short)(topic.Partitions.FirstOrDefault()?.Replicas.Length ?? 0)
+                });
+            }
+
+            return topics;
+        });
     }
 
     public async Task<Topic?> GetByNameAsync(string name)

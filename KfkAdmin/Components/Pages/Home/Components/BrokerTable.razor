@@ -16,7 +16,15 @@
                 <tr>
                     <td>@broker.BrokerId</td>
                     <td>@broker.Host : @broker.Port</td>
-                    <td>@broker.PartitionCount (@broker.PartitionPercent%)</td>
+                    <td>
+                        @broker.PartitionCount 
+                        
+                        @if (broker.PartitionPercent > 0)
+                        {
+                            <span>(@broker.PartitionPercent%)</span>
+                        }
+
+                    </td>
                 </tr>
             }
         }

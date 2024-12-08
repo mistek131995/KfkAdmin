@@ -19,7 +19,8 @@ public partial class BrokerTable(IKafkaRepositoryProvider repositoryProvider) : 
             Host = x.Host,
             Port = x.Port,
             PartitionCount = partitions.Count(p => p.BrokerId == x.BrokerId),
-            PartitionPercent = (double)partitions.Count(p => p.BrokerId == x.BrokerId) / partitions.Count * 100
+            PartitionPercent = partitions.Count(p => p.BrokerId == x.BrokerId) > 0 ? 
+                (double)partitions.Count(p => p.BrokerId == x.BrokerId) / partitions.Count * 100 : 0
         }).ToList();
     }
     
