@@ -23,7 +23,7 @@
 
                         @if (broker.PartitionPercent > 0)
                         {
-                            <span>(@broker.PartitionPercent%)</span>
+                            <span>(@Math.Round(broker.PartitionPercent, 1)%)</span>
                         }
 
                     </td>

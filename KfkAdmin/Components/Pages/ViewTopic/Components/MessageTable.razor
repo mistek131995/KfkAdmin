@@ -1,4 +1,6 @@
 ﻿@using KfkAdmin.Extensions.Kafka
+@rendermode InteractiveServer
+
 <h3>Сообщения в топике</h3>
 
 <table class="table table-bordered table-hover">
@@ -10,7 +12,7 @@
     </tr>
     </thead>
     <tbody>
-    @if (messages is { Count: > 0 })
+    @if (messages is { Count: > 0 } && showMessageState == LoadingMessageState.Ready) /*Сообщения есть и загружены*/
     {
         @foreach (var message in messages)
         {
@@ -21,6 +23,22 @@
             </tr>
         }
     }
+    else if (showMessageState == LoadingMessageState.Hide) /*Сообщения скрыты*/
+    {
+        <tr>
+            <td colspan="3" class="text-center">
+                <button class="btn btn-primary" @onclick="ShowMessageAsync">
+                    Отобразить сообщения
+                </button>
+            </td>
+        </tr>
+    }
+    else if (showMessageState == LoadingMessageState.Loading)
+    {
+        <tr>
+            <td colspan="3" class="text-center">Загрузка сообщений</td>
+        </tr>
+    } /*Загрузка сообщений*/
     else
     {
         <tr>
