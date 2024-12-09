@@ -28,6 +28,11 @@ public static class KafkaExtension
             GroupId = "kfk-admin-group",
             AutoOffsetReset = AutoOffsetReset.Earliest
         }).Build());
+        
+        services.AddScoped<IProducer<Null, string>>(x => new ProducerBuilder<Null, string>(new ProducerConfig()
+        {
+            BootstrapServers = host,
+        }).Build());
 
         services.AddScoped<IKafkaRepositoryProvider, RepositoryProvider>();
         services.AddScoped<ITopicService, TopicService>();
