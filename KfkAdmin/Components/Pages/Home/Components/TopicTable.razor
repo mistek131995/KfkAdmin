@@ -34,7 +34,7 @@
                 <td>
                     <div class="d-flex justify-content-between">
                         <span>@topic.Name</span>
-                        <RenameTopicModal OldName="@topic.Name"/>
+                        <RenameTopicModal OldName="@topic.Name" OnRenameSuccess="LoadTopicsAsync"/>
                     </div>
                 </td>
                 <td>@topic.PartitionCount</td>
