@@ -29,7 +29,7 @@ public static class KafkaExtension
             AutoOffsetReset = AutoOffsetReset.Earliest
         }).Build());
         
-        services.AddScoped<IProducer<Null, string>>(x => new ProducerBuilder<Null, string>(new ProducerConfig()
+        services.AddScoped<IProducer<string?, string>>(x => new ProducerBuilder<string?, string>(new ProducerConfig()
         {
             BootstrapServers = host,
         }).Build());

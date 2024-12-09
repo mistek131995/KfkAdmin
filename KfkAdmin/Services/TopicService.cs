@@ -7,7 +7,7 @@ using KfkAdmin.Models.Entities;
 
 namespace KfkAdmin.Services;
 
-public class TopicService(IAdminClient adminClient, IConsumer<Ignore, string> consumer, IProducer<Null, string> producer, IKafkaRepositoryProvider repositoryProvider) : ITopicService
+public class TopicService(IAdminClient adminClient, IConsumer<Ignore, string> consumer, IProducer<string?, string> producer, IKafkaRepositoryProvider repositoryProvider) : ITopicService
 {
     public async Task TransferDataAsync(string fromName, string toName)
     {
@@ -24,7 +24,7 @@ public class TopicService(IAdminClient adminClient, IConsumer<Ignore, string> co
             }
 
             // Отправляем сообщение в новый топик
-            await producer.ProduceAsync(toName, new Message<Null, string> { Value = consumeResult.Message.Value });
+            await producer.ProduceAsync(toName, new Message<string?, string> { Value = consumeResult.Message.Value });
 
             Console.WriteLine($"Transferred message: {consumeResult.Message.Value}");
         }

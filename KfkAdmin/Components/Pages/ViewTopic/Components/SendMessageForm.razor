@@ -1,26 +1,45 @@
 ﻿@using KfkAdmin.Components.Utils.Modal
 @rendermode InteractiveServer
 
-<Modal @ref="ModalInstance">
-    <EditForm Model="model" FormName="SendMessageForm" OnValidSubmit="SendMessageFormHandler" Title="Пример модального окна" OnConfirm="SaveChanges" OnClose="CancelChanges">
+<Modal @ref="modalInstance">
+    <EditForm Model="model" FormName="SendMessageForm" OnValidSubmit="SendMessageFormHandler" Title="Отправка сообщения" OnConfirm="SaveChanges" OnClose="CancelChanges">
         <DataAnnotationsValidator/>
         <ValidationSummary/>
 
         <div>
             <label>Ключ:</label>
-            <InputText @bind-Value="model.Key" class="form-control"/>
+            <InputText class="form-control" @bind-Value="model.Key"/>
         </div>
 
         <div>
             <label>Заголовок:</label>
-            <InputTextArea @bind-Value="model.Headers" class="form-control"/>
+            <InputTextArea class="form-control" @bind-Value="model.Headers"/>
         </div>
 
         <div>
+            <label>Формат сериализации:</label>
+            <InputSelect class="form-select" @bind-Value="model.SerializeFormat">
+                <option value="json">JSON</option>
+                <option value="avro">Avro</option>
+                <option value="json">Protobuf</option>
+                <option value="binary">Бинарный</option>
+            </InputSelect>
+        </div>
+        
+        <div>
             <label>Полезная нагрузка:</label>
-            <InputTextArea @bind-Value="model.Value" class="form-control"/>
+            <InputTextArea class="form-control" rows="6" @bind-Value="model.Value"/>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn btn-success" type="submit" @onclick="async () => { await SendMessageHandlerAsync(); }">
+                Отправить
+            </button>
+            <button class="btn btn-danger" @onclick="() => { modalInstance.Hide(); }" type="button">
+                Закрыть
+            </button>
         </div>
     </EditForm>
 </Modal>
 
-<button class="btn btn-success" @onclick="OpenModal">Отправить сообщение</button>
+<button class="btn btn-success" @onclick="() => { modalInstance.Show(); }">Отправить сообщение</button>

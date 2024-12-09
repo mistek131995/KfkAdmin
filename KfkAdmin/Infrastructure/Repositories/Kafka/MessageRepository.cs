@@ -1,25 +1,17 @@
 ﻿using Confluent.Kafka;
 using KfkAdmin.Interfaces.Repositories;
+using KfkAdmin.Models.Entities;
 
 namespace KfkAdmin.Infrastructure.Repositories.Kafka;
 
-public class MessageRepository : IMessageRepository
+public class MessageRepository(IConsumer<Ignore, string> consumer, IProducer<string?, string> producer)
+    : IMessageRepository
 {
     public async Task<List<string>> GetByTopicNameAsync(string topicName)
     {
         return await Task.Run(() =>
         {
-            var consumerConfig = new ConsumerConfig
-            {
-                BootstrapServers = Environment.GetEnvironmentVariable("KafkaHost"),
-                GroupId = "blazor-group",
-                AutoOffsetReset = AutoOffsetReset.Earliest,
-                EnableAutoCommit = false
-            };
-
             var messages = new List<string>();
-
-            using var consumer = new ConsumerBuilder<Ignore, string>(consumerConfig).Build();
 
             consumer.Subscribe(topicName);
 
@@ -40,8 +32,25 @@ public class MessageRepository : IMessageRepository
             }
 
             consumer.Close();
-            
-            return messages; 
+
+            return messages;
+        });
+    }
+
+    public async Task SendMessagesAsync(Message message)
+    {
+        var headers = new Headers();
+
+        foreach (var messageHeader in message.Headers)
+        {
+            headers.Add(messageHeader.Key, messageHeader.Value);
+        }
+
+        await producer.ProduceAsync(message.Topic, new Message<string?, string>()
+        {
+            Value = message.Payload,
+            Key = message.Key,
+            Headers = headers
         });
     }
 }
