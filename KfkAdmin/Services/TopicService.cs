@@ -54,6 +54,17 @@ public class TopicService(IAdminClient adminClient, IConsumer<string?, string> c
         await repositoryProvider.TopicRepository.DeleteAsync(oldName);
     }
 
+    public async Task ChangePartitionCountAsync(string topicName, int partitionCount)
+    {
+        await adminClient.CreatePartitionsAsync([
+            new PartitionsSpecification()
+            {
+                Topic = topicName,
+                IncreaseTo = partitionCount
+            }
+        ]);
+    }
+
     private async Task TransferOffsetsAsync(string oldTopic, string newTopic)
     {
         // Получение всех Consumer Groups, связанных с топиком
