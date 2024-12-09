@@ -1,0 +1,31 @@
+﻿@using KfkAdmin.Extensions.Kafka
+<h3>Сообщения в топике</h3>
+
+<table class="table table-bordered table-hover">
+    <thead>
+    <tr>
+        <th>Ключ</th>
+        <th>Заголовок</th>
+        <th>Сообщение</th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (messages is { Count: > 0 })
+    {
+        @foreach (var message in messages)
+        {
+            <tr>
+                <td>@message.Key</td>
+                <td>@message.Headers.HeaderToJson()</td>
+                <td>@message.Payload</td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td colspan="3">Сообщения не найдены</td>
+        </tr>
+    }
+    </tbody>
+</table>

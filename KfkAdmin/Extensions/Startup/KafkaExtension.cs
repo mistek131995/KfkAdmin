@@ -8,6 +8,8 @@ namespace KfkAdmin.Extensions.Startup;
 
 public static class KafkaExtension
 {
+    public const string CONSUMER_GROUP_ID = "kfk-admin-group";
+    
     public static void AddKafkaExtension(this IServiceCollection services)
     {
         //var host = Environment.GetEnvironmentVariable("KafkaHost");
@@ -22,11 +24,12 @@ public static class KafkaExtension
             return new AdminClientBuilder(config).Build();
         });
         
-        services.AddScoped<IConsumer<Ignore, string>>(sp => new ConsumerBuilder<Ignore, string>(new ConsumerConfig()
+        services.AddScoped<IConsumer<string?, string>>(sp => new ConsumerBuilder<string?, string>(new ConsumerConfig()
         {
             BootstrapServers = host,
-            GroupId = "kfk-admin-group",
-            AutoOffsetReset = AutoOffsetReset.Earliest
+            GroupId = CONSUMER_GROUP_ID,
+            AutoOffsetReset = AutoOffsetReset.Earliest,
+            EnableAutoCommit = false,
         }).Build());
         
         services.AddScoped<IProducer<string?, string>>(x => new ProducerBuilder<string?, string>(new ProducerConfig()

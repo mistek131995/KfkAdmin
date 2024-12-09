@@ -7,7 +7,7 @@ using KfkAdmin.Models.Entities;
 
 namespace KfkAdmin.Services;
 
-public class TopicService(IAdminClient adminClient, IConsumer<Ignore, string> consumer, IProducer<string?, string> producer, IKafkaRepositoryProvider repositoryProvider) : ITopicService
+public class TopicService(IAdminClient adminClient, IConsumer<string?, string> consumer, IProducer<string?, string> producer, IKafkaRepositoryProvider repositoryProvider) : ITopicService
 {
     public async Task TransferDataAsync(string fromName, string toName)
     {

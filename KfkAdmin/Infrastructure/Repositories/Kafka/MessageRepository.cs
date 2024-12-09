@@ -4,37 +4,37 @@ using KfkAdmin.Models.Entities;
 
 namespace KfkAdmin.Infrastructure.Repositories.Kafka;
 
-public class MessageRepository(IConsumer<Ignore, string> consumer, IProducer<string?, string> producer)
+public class MessageRepository(IConsumer<string?, string> consumer, IProducer<string?, string> producer, IAdminClient adminClient)
     : IMessageRepository
 {
-    public async Task<List<string>> GetByTopicNameAsync(string topicName)
+    public async Task<List<Message>> GetByTopicNameAsync(string topicName)
     {
-        return await Task.Run(() =>
+        var messages = new List<Message>();
+
+        var metadata = await Task.Run(() => adminClient.GetMetadata(topicName, TimeSpan.FromSeconds(5)));
+        var topicPartitions = metadata.Topics
+            .First(t => t.Topic == topicName).Partitions
+            .Select(p => new TopicPartitionOffset(new TopicPartition(topicName, p.PartitionId), Offset.Beginning))
+            .ToList();
+
+        consumer.Assign(topicPartitions);
+
+        while (true)
         {
-            var messages = new List<string>();
-
-            consumer.Subscribe(topicName);
-
-            for (int i = 0; i < 100; i++)
+            var consumeResult = await Task.Run(() => consumer.Consume(TimeSpan.FromSeconds(2)));
+            if (consumeResult == null)
             {
-                try
-                {
-                    var result = consumer.Consume(TimeSpan.FromSeconds(5));
-                    if (result != null)
-                    {
-                        messages.Add(result.Message.Value);
-                    }
-                }
-                catch (ConsumeException ex)
-                {
-                    Console.WriteLine($"Ошибка при чтении Kafka: {ex.Message}");
-                }
+                return messages;
             }
 
-            consumer.Close();
-
-            return messages;
-        });
+            messages.Add(new Message
+            {
+                Key = consumeResult.Message.Key,
+                Payload = consumeResult.Message.Value,
+                Headers = consumeResult.Message.Headers?.ToDictionary(h => h.Key, h => h.GetValueBytes()),
+                Topic = consumeResult.Topic
+            });
+        }
     }
 
     public async Task SendMessagesAsync(Message message)
