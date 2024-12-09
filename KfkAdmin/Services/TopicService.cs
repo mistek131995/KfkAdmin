@@ -1,7 +1,6 @@
 ﻿using Confluent.Kafka;
 using Confluent.Kafka.Admin;
 using KfkAdmin.Interfaces.Providers;
-using KfkAdmin.Interfaces.Repositories;
 using KfkAdmin.Interfaces.Services;
 using KfkAdmin.Models.Entities;
 
@@ -11,29 +10,31 @@ public class TopicService(IAdminClient adminClient, IConsumer<string?, string> c
 {
     public async Task TransferDataAsync(string fromName, string toName)
     {
-        consumer.Subscribe([fromName]);
+        var metadata = await Task.Run(() => adminClient.GetMetadata(fromName, TimeSpan.FromSeconds(5)));
+        var topicPartitions = metadata.Topics
+            .First(t => t.Topic == fromName).Partitions
+            .Select(p => new TopicPartitionOffset(new TopicPartition(fromName, p.PartitionId), Offset.Beginning))
+            .ToList();
+        
+        consumer.Assign(topicPartitions);
         
         while (true)
         {
-            var consumeResult = consumer.Consume(TimeSpan.FromMilliseconds(500));
-
+            var consumeResult = await Task.Run(() => consumer.Consume(TimeSpan.FromSeconds(2)));
             if (consumeResult == null)
             {
-                // Если сообщения больше нет, выходим
                 break;
             }
 
-            // Отправляем сообщение в новый топик
-            await producer.ProduceAsync(toName, new Message<string?, string> { Value = consumeResult.Message.Value });
-
-            Console.WriteLine($"Transferred message: {consumeResult.Message.Value}");
+            await producer.ProduceAsync(toName, new Message<string?, string>
+            {
+                Key = consumeResult.Message.Key,
+                Value = consumeResult.Message.Value,
+                Headers = consumeResult.Message.Headers
+            });
         }
-
-        consumer.Unsubscribe();
         
-        var groupIds = await GetGroupsForTopicAsync(fromName);
-        
-        await TransferOffsetsAsync(fromName, toName, groupIds);
+        await TransferOffsetsAsync(fromName, toName);
     }
 
     public async Task RenameAsync(string oldName, string newName)
@@ -53,77 +54,51 @@ public class TopicService(IAdminClient adminClient, IConsumer<string?, string> c
         await repositoryProvider.TopicRepository.DeleteAsync(oldName);
     }
 
-private async Task TransferOffsetsAsync(string oldTopic, string newTopic, List<string> groupIds)
-{
-    // Получение информации о разделах старого топика
-    var metadata = adminClient.GetMetadata(TimeSpan.FromSeconds(5));
-    var oldTopicPartitions = metadata.Topics
-        .FirstOrDefault(t => t.Topic == oldTopic)?.Partitions
-        .Select(p => new TopicPartition(oldTopic, p.PartitionId))
-        .ToList();
-
-    if (oldTopicPartitions == null || oldTopicPartitions.Count == 0)
+    private async Task TransferOffsetsAsync(string oldTopic, string newTopic)
     {
-        return;
-    }
+        // Получение всех Consumer Groups, связанных с топиком
+        var groupIds = await GetConsumerGroupsForTopicAsync(oldTopic);
 
-    foreach (var groupId in groupIds)
-    {
-        var oldOffsets = consumer.Committed(oldTopicPartitions, TimeSpan.FromSeconds(10));
-
-        // Создание списка отступов для нового топика
-        var newOffsets = oldOffsets
-            .Where(o => o.Offset != Offset.Unset)
-            .Select(o => new TopicPartitionOffset(new TopicPartition(newTopic, o.Partition), o.Offset))
-            .ToList();
-
-        if (newOffsets.Any())
+        foreach (var groupId in groupIds)
         {
-            // Преобразование в формат ConsumerGroupTopicPartitionOffsets
-            var offsetsForNewTopic = new List<ConsumerGroupTopicPartitionOffsets>
+            try
             {
-                new (groupId, newOffsets)
-            };
+                // Получаем отступы для каждой группы
+                var offsets = consumer.Committed(
+                    new List<TopicPartition> { new TopicPartition(oldTopic, 0) }, // Обновите для всех партиций
+                    TimeSpan.FromSeconds(5)
+                );
 
-            // Применение отступов к новому топику
-            await adminClient.AlterConsumerGroupOffsetsAsync(offsetsForNewTopic);
-        }
-    }
-}
+                var newOffsets = offsets.Select(o => new TopicPartitionOffset(
+                    new TopicPartition(newTopic, o.Partition),
+                    o.Offset
+                )).ToList();
 
-    
-    private async Task<List<string>> GetGroupsForTopicAsync(string topicName)
-    {
-        // Получение всех групп
-        var allGroups = (await adminClient.ListConsumerGroupsAsync(new ListConsumerGroupsOptions()
-            {
-                RequestTimeout = TimeSpan.FromSeconds(10)
-            })).Valid
-            .Select(g => g.GroupId)
-            .ToList();
-
-        var result = new List<string>();
-
-        // Описание групп
-        var groupDescriptions = await adminClient.DescribeConsumerGroupsAsync(allGroups);
-
-        foreach (var group in groupDescriptions.ConsumerGroupDescriptions)
-        {
-            if (group.State == ConsumerGroupState.Stable)
-            {
-                foreach (var assignment in group.Members.Select(m => m.Assignment))
+                // Обновляем отступы для нового топика
+                var offsetsForNewTopic = new List<ConsumerGroupTopicPartitionOffsets>
                 {
-                    // Проверяем, привязан ли раздел к топику
-                    if (assignment.TopicPartitions.Any(tp => tp.Topic == topicName))
-                    {
-                        result.Add(group.GroupId);
-                        break;
-                    }
-                }
+                    new(groupId, newOffsets)
+                };
+
+                await adminClient.AlterConsumerGroupOffsetsAsync(offsetsForNewTopic);
+                Console.WriteLine($"Offsets transferred for group '{groupId}'.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error transferring offsets for group '{groupId}': {ex.Message}");
             }
         }
+    }
 
-        return result;
+    private async Task<List<string>> GetConsumerGroupsForTopicAsync(string topic)
+    {
+        var groups = await Task.Run(() => adminClient.ListGroups(TimeSpan.FromSeconds(5)));
+        var groupIds = groups
+            .Where(g => g.State == "STABLE") // Только активные группы
+            .Select(g => g.Group)
+            .ToList();
+
+        return groupIds;
     }
 
 }
