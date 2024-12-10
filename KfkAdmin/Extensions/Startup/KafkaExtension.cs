@@ -15,7 +15,7 @@ public static class KafkaExtension
         //var host = Environment.GetEnvironmentVariable("KafkaHost");
         var host = "localhost:9092,localhost:9093";
         
-        services.AddScoped<IAdminClient>(_ =>
+        services.AddTransient<IAdminClient>(_ =>
         {
             var config = new AdminClientConfig
             {
@@ -24,16 +24,15 @@ public static class KafkaExtension
             return new AdminClientBuilder(config).Build();
         });
         
-        services.AddScoped<IConsumer<string?, string>>(x => new ConsumerBuilder<string?, string>(new ConsumerConfig()
+        services.AddTransient<IConsumer<string?, string>>(x => new ConsumerBuilder<string?, string>(new ConsumerConfig()
         {
             BootstrapServers = host,
             GroupId = CONSUMER_GROUP_ID,
             AutoOffsetReset = AutoOffsetReset.Earliest,
             EnableAutoCommit = false,
-            //EnablePartitionEof = true
         }).Build());
         
-        services.AddScoped<IProducer<string?, string>>(x => new ProducerBuilder<string?, string>(new ProducerConfig()
+        services.AddTransient<IProducer<string?, string>>(x => new ProducerBuilder<string?, string>(new ProducerConfig()
         {
             BootstrapServers = host,
         }).Build());

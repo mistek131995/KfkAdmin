@@ -5,5 +5,5 @@ namespace KfkAdmin.Interfaces.Repositories;
 
 public interface IPartitionRepository : IBaseKafkaRepository
 {
-    List<Partition> GetAll();
+    Task<List<Partition>> GetAllAsync();
 }

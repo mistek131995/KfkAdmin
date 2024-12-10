@@ -8,9 +8,9 @@ namespace KfkAdmin.Infrastructure.Repositories.Kafka;
 
 public class TopicRepository(IAdminClient adminClient, IConsumer<string?, string> consumer) : ITopicRepository
 {
-    public List<Topic> GetAll()
+    public async Task<List<Topic>> GetAllAsync()
     {
-        var metadata = adminClient.GetMetadata(TimeSpan.FromSeconds(10));
+        var metadata = await Task.Run(() => adminClient.GetMetadata(TimeSpan.FromSeconds(10)));
         
         var topics = metadata.Topics.Select(topic => new Topic()
         {
@@ -39,9 +39,9 @@ public class TopicRepository(IAdminClient adminClient, IConsumer<string?, string
         return count;
     }
 
-    public List<Topic> GetByBrokerId(int brokerId)
+    public async Task<List<Topic>> GetByBrokerIdAsync(int brokerId)
     {
-        var metadata = adminClient.GetMetadata(TimeSpan.FromSeconds(10));
+        var metadata = await Task.Run(() => adminClient.GetMetadata(TimeSpan.FromSeconds(10)));
 
         var topics = new List<Topic>();
 
@@ -59,9 +59,9 @@ public class TopicRepository(IAdminClient adminClient, IConsumer<string?, string
         return topics;
     }
 
-    public Topic GetByName(string name)
+    public async Task<Topic> GetByNameAsync(string name)
     {
-        var metadata = adminClient.GetMetadata(TimeSpan.FromSeconds(10));
+        var metadata = await Task.Run(() => adminClient.GetMetadata(TimeSpan.FromSeconds(10)));
         var topic = metadata.Topics.FirstOrDefault(x => x.Topic == name);
 
         if (topic == null)

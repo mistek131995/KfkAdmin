@@ -8,10 +8,10 @@ public partial class BrokerTable(IKafkaRepositoryProvider repositoryProvider) : 
 {
     private List<BrokerTableViewModel> viewModel;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        var brokers = repositoryProvider.BrokerRepository.GetAll();
-        var partitions = repositoryProvider.PartitionRepository.GetAll();
+        var brokers = await repositoryProvider.BrokerRepository.GetAllAsync();
+        var partitions = await repositoryProvider.PartitionRepository.GetAllAsync();
 
         viewModel = brokers.Select(x => new BrokerTableViewModel()
         {

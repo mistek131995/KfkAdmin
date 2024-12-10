@@ -20,9 +20,9 @@ public partial class ChangePartitionModal : ComponentBase
     private ChangePartitionViewModel modalForm = new();
     private int partitionCount = 0;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        partitionCount = repositoryProvider.TopicRepository.GetByName(TopicName)?.PartitionCount ?? 0;
+        partitionCount = (await repositoryProvider.TopicRepository.GetByNameAsync(TopicName))?.PartitionCount ?? 0;
     }
 
     public async Task HandleValidSubmit()

@@ -5,7 +5,7 @@
 <h3 class="mb-2">Топики</h3>
 
 <div class="d-flex mb-3 p-2 border border-1 rounded-1">
-    <AddTopicModal OnCreateComplete="LoadTopics"/>
+    <AddTopicModal OnCreateComplete="LoadTopicsAsync"/>
 </div>
 
 <table class="table table-bordered table-hover">
@@ -35,13 +35,13 @@
                 <td>
                     <div class="d-flex justify-content-between">
                         <span>@topic.Name</span>
-                        <RenameTopicModal OldName="@topic.Name" OnRenameSuccess="LoadTopics"/>
+                        <RenameTopicModal OldName="@topic.Name" OnRenameSuccess="LoadTopicsAsync"/>
                     </div>
                 </td>
                 <td>
                     <div class="d-flex justify-content-between">
                         <span>@topic.PartitionCount</span>
-                        <ChangePartitionModal TopicName="@topic.Name" OnChangeSuccess="LoadTopics"/>
+                        <ChangePartitionModal TopicName="@topic.Name" OnChangeSuccess="LoadTopicsAsync"/>
                     </div>
                 </td>
                 <td>@topic.ReplicationFactor</td>

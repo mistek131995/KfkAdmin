@@ -6,9 +6,9 @@ namespace KfkAdmin.Infrastructure.Repositories.Kafka;
 
 public class PartitionRepository(IAdminClient adminClient) : IPartitionRepository
 {
-    public List<Partition> GetAll()
+    public async Task<List<Partition>> GetAllAsync()
     {
-        var metadata = adminClient.GetMetadata(TimeSpan.FromSeconds(10));
+        var metadata = await Task.Run(() => adminClient.GetMetadata(TimeSpan.FromSeconds(10)));
         
         return metadata.Topics
             .SelectMany(t => t.Partitions)
