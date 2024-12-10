@@ -3,6 +3,7 @@ using KfkAdmin.Interfaces.Providers;
 using KfkAdmin.Interfaces.Services;
 using KfkAdmin.Models.Entities;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace KfkAdmin.Components.Pages.Home.Components;
 
@@ -15,6 +16,7 @@ public partial class ChangePartitionModal : ComponentBase
     [Inject] private ITopicService _topicService { get; set; }
     
     private Modal modal;
+    private EditContext editContext;
     private ChangePartitionViewModel modalForm = new();
     private int partitionCount = 0;
 

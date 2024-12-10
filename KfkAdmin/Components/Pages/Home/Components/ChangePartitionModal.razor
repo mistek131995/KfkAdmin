@@ -4,7 +4,7 @@
 </button>
 
 <Modal @ref="modal" Title="Переименовать топик">
-    <EditForm Model="@modalForm" OnValidSubmit="HandleValidSubmit">
+    <EditForm Model="modalForm" EditContext="editContext" OnValidSubmit="HandleValidSubmit">
         <DataAnnotationsValidator />
         <ValidationSummary />
 
@@ -20,7 +20,7 @@
 
         <div class="modal-footer">
             <button class="btn btn-success" type="submit">Сохранить</button>
-            <button class="btn btn-danger" @onclick="modal.Hide">Закрыть</button>
+            <button class="btn btn-danger" type="button" @onclick="modal.Hide">Закрыть</button>
         </div>
     </EditForm>
 </Modal>

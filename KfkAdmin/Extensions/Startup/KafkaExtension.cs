@@ -24,12 +24,13 @@ public static class KafkaExtension
             return new AdminClientBuilder(config).Build();
         });
         
-        services.AddScoped<IConsumer<string?, string>>(sp => new ConsumerBuilder<string?, string>(new ConsumerConfig()
+        services.AddScoped<IConsumer<string?, string>>(x => new ConsumerBuilder<string?, string>(new ConsumerConfig()
         {
             BootstrapServers = host,
             GroupId = CONSUMER_GROUP_ID,
             AutoOffsetReset = AutoOffsetReset.Earliest,
             EnableAutoCommit = false,
+            //EnablePartitionEof = true
         }).Build());
         
         services.AddScoped<IProducer<string?, string>>(x => new ProducerBuilder<string?, string>(new ProducerConfig()

@@ -5,10 +5,16 @@
 
 <Modal @ref="modal" Title="Переименовать топик">
     <EditForm Model="@modalForm" OnValidSubmit="HandleValidSubmit">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+
+        <div class="badge bg-warning text-dark mb-3 text-center w-100">
+            Кафка не поддерживает переименование топиков.<br/>
+            Переименование топиков реализовано через механизм создания<br/> нового топика и перенос в него информации из старого топика.<br/>
+            В процессе переименования есть шанс потерять некоторые данные.
+        </div>
         
-        <div>
+        <div class="mb-2">
             <label>Старое имя:</label>
             <InputText class="form-control" @bind-Value="OldName" disabled="true"/>
         </div>
@@ -17,7 +23,7 @@
             <label>Новое имя:</label>
             <InputText class="form-control" @bind-Value="modalForm.NewName"/>
         </div>
-        
+
         <div class="modal-footer">
             <button class="btn btn-success" type="submit">Сохранить</button>
             <button class="btn btn-danger" @onclick="modal.Hide">Закрыть</button>

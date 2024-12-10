@@ -6,19 +6,37 @@ using Partition = KfkAdmin.Models.Entities.Partition;
 
 namespace KfkAdmin.Infrastructure.Repositories.Kafka;
 
-public class TopicRepository(IAdminClient adminClient) : ITopicRepository
+public class TopicRepository(IAdminClient adminClient, IConsumer<string?, string> consumer) : ITopicRepository
 {
     public async Task<List<Topic>> GetAllAsync()
     {
         var metadata = await Task.Run(() => adminClient.GetMetadata(TimeSpan.FromSeconds(10)));
-
-        return metadata.Topics.Select(topic => new Topic()
+        
+        var topics = metadata.Topics.Select(topic => new Topic()
         {
             Name = topic.Topic, 
             BrokerIds = topic.Partitions.Select(x => x.Leader).Distinct().ToList(),
             PartitionCount = topic.Partitions.Count, 
-            ReplicationFactor = (short)(topic.Partitions.FirstOrDefault()?.Replicas.Length ?? 0)
+            ReplicationFactor = (short)(topic.Partitions.FirstOrDefault()?.Replicas.Length ?? 0),
+            MessageCount = GetMessageCount(topic)
         }).ToList();
+
+        return topics;
+    }
+
+    private long GetMessageCount(TopicMetadata topicMetadata)
+    {
+        long count = 0;
+
+        foreach (var partition in topicMetadata.Partitions)
+        {
+            var offset = consumer.QueryWatermarkOffsets(new TopicPartition(topicMetadata.Topic, partition.PartitionId), TimeSpan.FromSeconds(10));
+            
+            if(offset is not null)
+                count += offset.High.Value - offset.Low.Value;
+        }
+        
+        return count;
     }
 
     public async Task<List<Topic>> GetByBrokerIdAsync(int brokerId)
