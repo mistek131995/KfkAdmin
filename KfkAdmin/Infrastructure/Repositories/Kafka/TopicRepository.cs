@@ -8,9 +8,9 @@ namespace KfkAdmin.Infrastructure.Repositories.Kafka;
 
 public class TopicRepository(IAdminClient adminClient, IConsumer<string?, string> consumer) : ITopicRepository
 {
-    public async Task<List<Topic>> GetAllAsync()
+    public List<Topic> GetAll()
     {
-        var metadata = await Task.Run(() => adminClient.GetMetadata(TimeSpan.FromSeconds(10)));
+        var metadata = adminClient.GetMetadata(TimeSpan.FromSeconds(10));
         
         var topics = metadata.Topics.Select(topic => new Topic()
         {
@@ -39,32 +39,29 @@ public class TopicRepository(IAdminClient adminClient, IConsumer<string?, string
         return count;
     }
 
-    public async Task<List<Topic>> GetByBrokerIdAsync(int brokerId)
+    public List<Topic> GetByBrokerId(int brokerId)
     {
-        return await Task.Run(() =>
+        var metadata = adminClient.GetMetadata(TimeSpan.FromSeconds(10));
+
+        var topics = new List<Topic>();
+
+        foreach (var topic in metadata.Topics.Where(x => x.Partitions.Any(p => p.Leader == brokerId)))
         {
-            var metadata = adminClient.GetMetadata(TimeSpan.FromSeconds(10));
-
-            var topics = new List<Topic>();
-
-            foreach (var topic in metadata.Topics.Where(x => x.Partitions.Any(p => p.Leader == brokerId)))
+            topics.Add(new Topic()
             {
-                topics.Add(new Topic()
-                {
-                    Name = topic.Topic, 
-                    BrokerIds = topic.Partitions.Select(x => x.Leader).Distinct().ToList(),
-                    PartitionCount = topic.Partitions.Count, 
-                    ReplicationFactor = (short)(topic.Partitions.FirstOrDefault()?.Replicas.Length ?? 0)
-                });
-            }
+                Name = topic.Topic, 
+                BrokerIds = topic.Partitions.Select(x => x.Leader).Distinct().ToList(),
+                PartitionCount = topic.Partitions.Count, 
+                ReplicationFactor = (short)(topic.Partitions.FirstOrDefault()?.Replicas.Length ?? 0)
+            });
+        }
 
-            return topics;
-        });
+        return topics;
     }
 
-    public async Task<Topic?> GetByNameAsync(string name)
+    public Topic GetByName(string name)
     {
-        var metadata = await Task.Run(() => adminClient.GetMetadata(TimeSpan.FromSeconds(10)));
+        var metadata = adminClient.GetMetadata(TimeSpan.FromSeconds(10));
         var topic = metadata.Topics.FirstOrDefault(x => x.Topic == name);
 
         if (topic == null)
@@ -88,11 +85,6 @@ public class TopicRepository(IAdminClient adminClient, IConsumer<string?, string
         };
         
         await adminClient.CreateTopicsAsync(new List<TopicSpecification> { topicSpec });
-    }
-
-    public Task UpdateAsync(Topic topic)
-    {
-        throw new NotImplementedException();
     }
 
     public async Task DeleteAsync(string name) => await adminClient.DeleteTopicsAsync([name]);

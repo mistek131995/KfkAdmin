@@ -8,23 +8,21 @@ public partial class TopicTable(IKafkaRepositoryProvider repositoryProvider) : C
 {
     private List<Topic> topics;
     
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        await base.OnInitializedAsync();
-
-        await LoadTopicsAsync();
+        LoadTopics();
     }
 
-    private async Task LoadTopicsAsync()
+    private void LoadTopics()
     {
-        topics = await repositoryProvider.TopicRepository.GetAllAsync();    
+        topics = repositoryProvider.TopicRepository.GetAll();    
     }
     
     private async Task DeleteTopicHandlerAsync(string name)
     {
         await repositoryProvider.TopicRepository.DeleteAsync(name);
         
-        topics = await repositoryProvider.TopicRepository.GetAllAsync();
+        topics = repositoryProvider.TopicRepository.GetAll();
     }
 
     private async Task SaveRenameAsync(string name)

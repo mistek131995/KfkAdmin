@@ -6,17 +6,16 @@ namespace KfkAdmin.Infrastructure.Repositories.Kafka;
 
 public class PartitionRepository(IAdminClient adminClient) : IPartitionRepository
 {
-    public async Task<List<Partition>> GetAllAsync()
+    public List<Partition> GetAll()
     {
-        return await Task.Run(() =>
-        {
-            var metadata = adminClient.GetMetadata(TimeSpan.FromSeconds(10));
-            
-            return metadata.Topics.SelectMany(t => t.Partitions).Select(x => new Partition()
+        var metadata = adminClient.GetMetadata(TimeSpan.FromSeconds(10));
+        
+        return metadata.Topics
+            .SelectMany(t => t.Partitions)
+            .Select(x => new Partition()
             {
                 Id = x.PartitionId,
                 BrokerId = x.Leader,
             }).ToList();
-        });
     }
 }

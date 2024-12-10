@@ -10,7 +10,7 @@ public class TopicService(IAdminClient adminClient, IConsumer<string?, string> c
 {
     public async Task TransferDataAsync(string fromName, string toName)
     {
-        var metadata = await Task.Run(() => adminClient.GetMetadata(fromName, TimeSpan.FromSeconds(5)));
+        var metadata = adminClient.GetMetadata(fromName, TimeSpan.FromSeconds(5));
         var topicPartitions = metadata.Topics
             .First(t => t.Topic == fromName).Partitions
             .Select(p => new TopicPartitionOffset(new TopicPartition(fromName, p.PartitionId), Offset.Beginning))
@@ -20,7 +20,7 @@ public class TopicService(IAdminClient adminClient, IConsumer<string?, string> c
         
         while (true)
         {
-            var consumeResult = await Task.Run(() => consumer.Consume(TimeSpan.FromSeconds(2)));
+            var consumeResult = consumer.Consume(TimeSpan.FromSeconds(2));
             if (consumeResult == null)
             {
                 break;
@@ -39,7 +39,7 @@ public class TopicService(IAdminClient adminClient, IConsumer<string?, string> c
 
     public async Task RenameAsync(string oldName, string newName)
     {
-        var oldTopic = await repositoryProvider.TopicRepository.GetByNameAsync(oldName) ?? 
+        var oldTopic = repositoryProvider.TopicRepository.GetByName(oldName) ?? 
                        throw new NullReferenceException($"Топик с именем {oldName} не найден");
 
         await repositoryProvider.TopicRepository.CreateAsync(new Topic()
@@ -68,7 +68,7 @@ public class TopicService(IAdminClient adminClient, IConsumer<string?, string> c
     private async Task TransferOffsetsAsync(string oldTopic, string newTopic)
     {
         // Получение всех Consumer Groups, связанных с топиком
-        var groupIds = await GetConsumerGroupsForTopicAsync(oldTopic);
+        var groupIds = GetConsumerGroupsForTopic(oldTopic);
 
         foreach (var groupId in groupIds)
         {
@@ -101,9 +101,9 @@ public class TopicService(IAdminClient adminClient, IConsumer<string?, string> c
         }
     }
 
-    private async Task<List<string>> GetConsumerGroupsForTopicAsync(string topic)
+    private List<string> GetConsumerGroupsForTopic(string topic)
     {
-        var groups = await Task.Run(() => adminClient.ListGroups(TimeSpan.FromSeconds(5)));
+        var groups = adminClient.ListGroups(TimeSpan.FromSeconds(5));
         var groupIds = groups
             .Where(g => g.State == "STABLE") // Только активные группы
             .Select(g => g.Group)

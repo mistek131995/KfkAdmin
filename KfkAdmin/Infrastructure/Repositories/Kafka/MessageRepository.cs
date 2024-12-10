@@ -11,7 +11,7 @@ public class MessageRepository(IConsumer<string?, string> consumer, IProducer<st
     {
         var messages = new List<Message>();
 
-        var metadata = await Task.Run(() => adminClient.GetMetadata(topicName, TimeSpan.FromSeconds(5)));
+        var metadata = adminClient.GetMetadata(topicName, TimeSpan.FromSeconds(5));
         var topicPartitions = metadata.Topics
             .First(t => t.Topic == topicName).Partitions
             .Select(p => new TopicPartitionOffset(new TopicPartition(topicName, p.PartitionId), Offset.Beginning))
@@ -19,9 +19,11 @@ public class MessageRepository(IConsumer<string?, string> consumer, IProducer<st
 
         consumer.Assign(topicPartitions);
 
+        await Task.Yield();
+        
         while (true)
         {
-            var consumeResult = await Task.Run(() => consumer.Consume(TimeSpan.FromSeconds(2)));
+            var consumeResult = consumer.Consume(TimeSpan.FromSeconds(2));
             if (consumeResult == null)
             {
                 return messages;

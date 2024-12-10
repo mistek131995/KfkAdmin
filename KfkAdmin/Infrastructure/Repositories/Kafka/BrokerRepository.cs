@@ -6,9 +6,9 @@ namespace KfkAdmin.Infrastructure.Repositories.Kafka;
 
 public class BrokerRepository(IAdminClient adminClient) : IBrokerRepository
 {
-    public async Task<List<Broker>> GetAllAsync()
+    public List<Broker> GetAll()
     {
-        var metadatas = await Task.Run(() => adminClient.GetMetadata(TimeSpan.FromSeconds(10)));
+        var metadatas = adminClient.GetMetadata(TimeSpan.FromSeconds(10));
 
         return metadatas.Brokers.Select(x => new Broker()
         {

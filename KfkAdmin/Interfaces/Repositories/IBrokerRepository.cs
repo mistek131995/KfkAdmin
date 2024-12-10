@@ -5,5 +5,5 @@ namespace KfkAdmin.Interfaces.Repositories;
 
 public interface IBrokerRepository : IBaseKafkaRepository
 {
-    Task<List<Broker>> GetAllAsync();
+    List<Broker> GetAll();
 }

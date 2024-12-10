@@ -6,12 +6,11 @@ namespace KfkAdmin.Interfaces.Repositories;
 
 public interface ITopicRepository : IBaseKafkaRepository
 {
-    Task<List<Topic>> GetAllAsync();
-    Task<List<Topic>> GetByBrokerIdAsync(int brokerId);
-    Task<Topic?> GetByNameAsync(string name);
+    List<Topic> GetAll();
+    List<Topic> GetByBrokerId(int brokerId);
+    Topic? GetByName(string name);
     
     Task CreateAsync(Topic topic);
-    Task UpdateAsync(Topic topic);
     Task DeleteAsync(string name);
     Task DeleteAsync(List<string> names);
 }
