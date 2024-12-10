@@ -7,16 +7,11 @@ namespace KfkAdmin.Components.Pages.ViewTopic.Components;
 public partial class MessageTable(IKafkaRepositoryProvider repositoryProvider) : ComponentBase
 {
     [Parameter] public string TopicName { get; set; }
+    [Parameter] public long MessageCount { get; set; }
+    
     private List<Message> messages = new();
 
     private LoadingMessageState showMessageState = LoadingMessageState.Hide;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await Task.Yield();
-    }
-    
-    
 
     private async Task ShowMessageAsync()
     {

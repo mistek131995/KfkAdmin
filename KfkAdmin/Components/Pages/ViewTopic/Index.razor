@@ -1,18 +1,24 @@
 ﻿@page "/view-topic/{topicName}"
 @using KfkAdmin.Components.Pages.ViewTopic.Components
+@using KfkAdmin.Interfaces.Providers
+@using KfkAdmin.Models.Entities
 @rendermode InteractiveServer
 
 <h3>Просмотр топика - @TopicName</h3>
 
 <SendMessageForm TopicName="@TopicName"/>
 
-<MessageTable TopicName="@TopicName"/>
+<MessageTable TopicName="@TopicName" MessageCount="(_topic?.MessageCount ?? 0)"/>
 
 @code {
+    [Inject] private IKafkaRepositoryProvider _repositoryProvider { get; set; }
+    
     [Parameter] public string TopicName { get; set; }
+
+    private Topic? _topic;
     
     protected override async Task OnInitializedAsync()
     {
-        await base.OnInitializedAsync();
+        _topic = await _repositoryProvider.TopicRepository.GetByNameAsync(TopicName);
     }
 }

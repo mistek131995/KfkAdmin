@@ -24,21 +24,6 @@ public class TopicRepository(IAdminClient adminClient, IConsumer<string?, string
         return topics;
     }
 
-    private long GetMessageCount(TopicMetadata topicMetadata)
-    {
-        long count = 0;
-
-        foreach (var partition in topicMetadata.Partitions)
-        {
-            var offset = consumer.QueryWatermarkOffsets(new TopicPartition(topicMetadata.Topic, partition.PartitionId), TimeSpan.FromSeconds(10));
-            
-            if(offset is not null)
-                count += offset.High.Value - offset.Low.Value;
-        }
-        
-        return count;
-    }
-
     public async Task<List<Topic>> GetByBrokerIdAsync(int brokerId)
     {
         var metadata = await Task.Run(() => adminClient.GetMetadata(TimeSpan.FromSeconds(10)));
@@ -52,7 +37,8 @@ public class TopicRepository(IAdminClient adminClient, IConsumer<string?, string
                 Name = topic.Topic, 
                 BrokerIds = topic.Partitions.Select(x => x.Leader).Distinct().ToList(),
                 PartitionCount = topic.Partitions.Count, 
-                ReplicationFactor = (short)(topic.Partitions.FirstOrDefault()?.Replicas.Length ?? 0)
+                ReplicationFactor = (short)(topic.Partitions.FirstOrDefault()?.Replicas.Length ?? 0),
+                MessageCount = GetMessageCount(topic)
             });
         }
 
@@ -71,7 +57,9 @@ public class TopicRepository(IAdminClient adminClient, IConsumer<string?, string
             {
                 Name = topic.Topic,
                 PartitionCount = topic.Partitions.Count,
-                ReplicationFactor = (short)(topic.Partitions.FirstOrDefault()?.Replicas.Length ?? 0)
+                ReplicationFactor = (short)(topic.Partitions.FirstOrDefault()?.Replicas.Length ?? 0),
+                BrokerIds = topic.Partitions.Select(x => x.Leader).Distinct().ToList(),
+                MessageCount = GetMessageCount(topic)
             };
     }
 
@@ -89,4 +77,19 @@ public class TopicRepository(IAdminClient adminClient, IConsumer<string?, string
 
     public async Task DeleteAsync(string name) => await adminClient.DeleteTopicsAsync([name]);
     public async Task DeleteAsync(List<string> names) => await adminClient.DeleteTopicsAsync(names);
+    
+    private long GetMessageCount(TopicMetadata topicMetadata)
+    {
+        long count = 0;
+
+        foreach (var partition in topicMetadata.Partitions)
+        {
+            var offset = consumer.QueryWatermarkOffsets(new TopicPartition(topicMetadata.Topic, partition.PartitionId), TimeSpan.FromSeconds(10));
+            
+            if(offset is not null)
+                count += offset.High.Value - offset.Low.Value;
+        }
+        
+        return count;
+    }
 }
