@@ -2,6 +2,7 @@ using KfkAdmin.Components;
 using KfkAdmin.Infrastructure.Database;
 using KfkAdmin.Extensions.Startup;
 using KfkAdmin.Middlewares;
+using KfkAdmin.Services.Logger;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,8 +13,9 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddKafkaExtension();
 builder.Services.AddDbContext<SqLiteContext>(options =>
-    options.UseSqlite("Data Source=./Infrastructure/Database/app.db;Mode=ReadWrite;"));
+    options.UseSqlite("Data Source=./app.db;Mode=ReadWrite;"));
 
+builder.Services.AddTransient<ILogger, DatabaseLogger>();
 
 SQLitePCL.Batteries.Init();
 
@@ -23,6 +25,13 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 using (var scope = app.Services.CreateScope())
 {
+    var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "app.db");
+
+    if (!File.Exists(dbPath))
+    {
+        await using var stream = File.Create(dbPath); 
+    }
+    
     var dbContext = scope.ServiceProvider.GetRequiredService<SqLiteContext>();
     await dbContext.Database.MigrateAsync();
 }
