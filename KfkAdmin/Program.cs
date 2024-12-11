@@ -1,5 +1,5 @@
 using KfkAdmin.Components;
-using KfkAdmin.Database;
+using KfkAdmin.Infrastructure.Database;
 using KfkAdmin.Extensions.Startup;
 using KfkAdmin.Middlewares;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +12,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddKafkaExtension();
 builder.Services.AddDbContext<SqLiteContext>(options =>
-    options.UseSqlite("Data Source=./Database/app.db"));
+    options.UseSqlite("Data Source=./Infrastructure/Database/app.db"));
 
 SQLitePCL.Batteries.Init();
 

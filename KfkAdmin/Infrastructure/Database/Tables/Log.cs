@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace KfkAdmin.Database.Tables;
+namespace KfkAdmin.Infrastructure.Database.Tables;
 
 public class Log
 {

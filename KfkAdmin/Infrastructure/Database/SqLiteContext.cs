@@ -1,7 +1,7 @@
-using KfkAdmin.Database.Tables;
+using KfkAdmin.Infrastructure.Database.Tables;
 using Microsoft.EntityFrameworkCore;
 
-namespace KfkAdmin.Database;
+namespace KfkAdmin.Infrastructure.Database;
 
 public class SqLiteContext(DbContextOptions<SqLiteContext> options) : DbContext(options)
 {
