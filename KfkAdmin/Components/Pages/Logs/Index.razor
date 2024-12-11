@@ -1,6 +1,44 @@
 @page "/Logs"
+@using KfkAdmin.Infrastructure.Database
+@using KfkAdmin.Infrastructure.Database.Tables
+@using Microsoft.EntityFrameworkCore
+@rendermode InteractiveServer
+
 <h3>Логи</h3>
 
+<table class="table table-hover table-bordered">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Текст</th>
+        <th>Дата</th>
+        <th>Уровень</th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (_logs is { Count: > 0 })
+    {
+        foreach (var log in _logs)
+        {
+            <tr>
+                <td>@log.Id</td>
+                <td>@log.Message</td>
+                <td>@log.Date.ToString("G")</td>
+                <td>@log.LogLevel</td>
+            </tr>
+        }
+    }
+    </tbody>
+</table>
+
 @code {
-    
+    [Inject] private SqLiteContext _context { get; set; }
+
+    private List<Log> _logs;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _logs = await _context.Logs.ToListAsync();
+    }
+
 }
