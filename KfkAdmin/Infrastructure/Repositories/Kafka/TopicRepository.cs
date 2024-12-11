@@ -2,7 +2,6 @@
 using Confluent.Kafka.Admin;
 using KfkAdmin.Interfaces.Repositories;
 using KfkAdmin.Models.Entities;
-using Partition = KfkAdmin.Models.Entities.Partition;
 
 namespace KfkAdmin.Infrastructure.Repositories.Kafka;
 
@@ -45,22 +44,22 @@ public class TopicRepository(IAdminClient adminClient, IConsumer<string?, string
         return topics;
     }
 
-    public async Task<Topic> GetByNameAsync(string name)
+    public async Task<Topic?> GetByNameAsync(string name)
     {
         var metadata = await Task.Run(() => adminClient.GetMetadata(TimeSpan.FromSeconds(10)));
         var topic = metadata.Topics.FirstOrDefault(x => x.Topic == name);
 
         if (topic == null)
             return null;
-        else
-            return new Topic()
-            {
-                Name = topic.Topic,
-                PartitionCount = topic.Partitions.Count,
-                ReplicationFactor = (short)(topic.Partitions.FirstOrDefault()?.Replicas.Length ?? 0),
-                BrokerIds = topic.Partitions.Select(x => x.Leader).Distinct().ToList(),
-                MessageCount = GetMessageCount(topic)
-            };
+        
+        return new Topic()
+        {
+            Name = topic.Topic,
+            PartitionCount = topic.Partitions.Count,
+            ReplicationFactor = (short)(topic.Partitions.FirstOrDefault()?.Replicas.Length ?? 0),
+            BrokerIds = topic.Partitions.Select(x => x.Leader).Distinct().ToList(),
+            MessageCount = GetMessageCount(topic)
+        };
     }
 
     public async Task CreateAsync(Topic topic)

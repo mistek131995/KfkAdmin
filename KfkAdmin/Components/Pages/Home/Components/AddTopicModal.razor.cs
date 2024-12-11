@@ -21,10 +21,11 @@ public partial class AddTopicModal(IKafkaRepositoryProvider repositoryProvider) 
             PartitionCount = formModal.PartitionCount,
             ReplicationFactor = formModal.ReplicationFactor,
         });
-
-        await OnCreateComplete.InvokeAsync();
+        
         modal.Hide();
         formModal = new();
+
+        await OnCreateComplete.InvokeAsync();
     }
 
     private class AddTopicViewModal()

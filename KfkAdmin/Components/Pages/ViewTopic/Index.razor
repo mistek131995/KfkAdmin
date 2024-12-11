@@ -6,6 +6,12 @@
 
 <h3>Просмотр топика - @TopicName</h3>
 
+@if (_topic is not null)
+{
+    <TopicInfo Topic="_topic"/>
+}
+
+
 <SendMessageForm TopicName="@TopicName"/>
 
 <MessageTable TopicName="@TopicName" MessageCount="(_topic?.MessageCount ?? 0)"/>

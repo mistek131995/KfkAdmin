@@ -30,6 +30,7 @@ public static class KafkaExtension
             GroupId = CONSUMER_GROUP_ID,
             AutoOffsetReset = AutoOffsetReset.Earliest,
             EnableAutoCommit = false,
+            MetadataMaxAgeMs = 1000
         }).Build());
         
         services.AddTransient<IProducer<string?, string>>(x => new ProducerBuilder<string?, string>(new ProducerConfig()
