@@ -2,6 +2,7 @@ using KfkAdmin.Components;
 using KfkAdmin.Infrastructure.Database;
 using KfkAdmin.Extensions.Startup;
 using KfkAdmin.Middlewares;
+using KfkAdmin.Services.Logger;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,15 +15,12 @@ builder.Services.AddKafkaExtension();
 builder.Services.AddDbContext<SqLiteContext>(options =>
     options.UseSqlite("Data Source=./Infrastructure/Database/app.db"));
 
+builder.Logging.AddProvider(new DbLoggerProvider(builder.Services.BuildServiceProvider()));
+
+
 SQLitePCL.Batteries.Init();
 
 var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<SqLiteContext>();
-    dbContext.Database.EnsureCreated();
-}
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
