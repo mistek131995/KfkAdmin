@@ -1,6 +1,8 @@
 using KfkAdmin.Components;
+using KfkAdmin.Database;
 using KfkAdmin.Extensions.Startup;
 using KfkAdmin.Middlewares;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,8 +11,18 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddKafkaExtension();
+builder.Services.AddDbContext<SqLiteContext>(options =>
+    options.UseSqlite("Data Source=./Database/app.db"));
+
+SQLitePCL.Batteries.Init();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<SqLiteContext>();
+    dbContext.Database.EnsureCreated();
+}
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
