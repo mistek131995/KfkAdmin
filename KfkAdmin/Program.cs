@@ -1,5 +1,6 @@
 using KfkAdmin.Components;
 using KfkAdmin.Extensions.Startup;
+using KfkAdmin.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,9 @@ builder.Services.AddRazorComponents()
 builder.Services.AddKafkaExtension();
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
