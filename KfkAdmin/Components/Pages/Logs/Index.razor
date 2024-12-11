@@ -6,6 +6,10 @@
 
 <h3>Логи</h3>
 
+<div class="d-flex justify-content-around">
+    
+</div>
+
 <table class="table table-hover table-bordered">
     <thead>
     <tr>
@@ -24,7 +28,7 @@
                 <td>@log.Id</td>
                 <td>@log.Message</td>
                 <td>@log.Date.ToString("G")</td>
-                <td>@log.LogLevel</td>
+                <td>@log.LogLevel.ToString()</td>
             </tr>
         }
     }

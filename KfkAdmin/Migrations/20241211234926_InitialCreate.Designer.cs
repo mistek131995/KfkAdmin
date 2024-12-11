@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KfkAdmin.Migrations
 {
     [DbContext(typeof(SqLiteContext))]
-    [Migration("20241211042047_InitialCreate")]
+    [Migration("20241211234926_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -29,9 +29,8 @@ namespace KfkAdmin.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("LogLevel")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("LogLevel")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Message")
                         .IsRequired()

@@ -26,9 +26,8 @@ namespace KfkAdmin.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("LogLevel")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("LogLevel")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Message")
                         .IsRequired()

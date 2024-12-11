@@ -18,7 +18,7 @@ namespace KfkAdmin.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Date = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    LogLevel = table.Column<string>(type: "TEXT", nullable: false),
+                    LogLevel = table.Column<int>(type: "INTEGER", nullable: false),
                     Message = table.Column<string>(type: "TEXT", nullable: false),
                     StackTrace = table.Column<string>(type: "TEXT", nullable: false),
                     Source = table.Column<string>(type: "TEXT", nullable: false)

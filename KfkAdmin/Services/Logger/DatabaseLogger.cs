@@ -12,8 +12,7 @@ public class DatabaseLogger(SqLiteContext context) : ILogger
 
     public bool IsEnabled(LogLevel logLevel)
     { 
-        //return logLevel > LogLevel.Warning;
-        return true;
+        return logLevel > LogLevel.Warning;
     }
 
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
@@ -22,7 +21,7 @@ public class DatabaseLogger(SqLiteContext context) : ILogger
 
         context.Logs.Add(new Log()
         {
-            LogLevel = logLevel.ToString(),
+            LogLevel = logLevel,
             Date = DateTime.UtcNow,
             Message = exception?.Message ?? string.Empty,
             StackTrace = exception?.StackTrace ?? string.Empty,
