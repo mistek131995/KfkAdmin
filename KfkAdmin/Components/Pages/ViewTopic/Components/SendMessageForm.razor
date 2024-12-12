@@ -6,29 +6,30 @@
         <DataAnnotationsValidator/>
         <ValidationSummary/>
 
-        <div>
+        <div class="mb-2">
             <label>Ключ:</label>
             <InputText class="form-control" @bind-Value="model.Key"/>
         </div>
 
-        <div>
+        <div class="mb-2">
             <label>Заголовок:</label>
             <InputTextArea class="form-control" @bind-Value="model.Headers"/>
         </div>
 
-        <div>
+        <div class="mb-2">
             <label>Формат сериализации:</label>
             <InputSelect class="form-select" @bind-Value="model.SerializeFormat">
                 <option value="json">JSON</option>
-                <option value="avro" disabled="disabled">Avro</option>
+                <option value="avro">Avro</option>
                 <option value="json" disabled="disabled">Protobuf</option>
                 @*<option value="binary">Бинарный</option>*@
             </InputSelect>
         </div>
         
-        <div>
+        
+        <div class="mb-2">
             <label>Полезная нагрузка:</label>
-            <InputTextArea class="form-control" rows="6" @bind-Value="model.Value"/>
+            <InputTextArea class="form-control" rows="6" @bind-Value="model.Value" placeholder="Введите ваш текст..."/>
         </div>
         
         <div class="modal-footer">
