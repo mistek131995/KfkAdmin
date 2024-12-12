@@ -6,6 +6,12 @@
 
 <h3>Логи</h3>
 
+<div class="d-flex mb-1">
+    <button class="btn btn-danger" @onclick="CleanLogsAsync">
+        Очистить логи
+    </button>
+</div>
+
 <table class="table table-hover table-bordered">
     <thead>
     <tr>
@@ -38,6 +44,15 @@
 
     protected override async Task OnInitializedAsync()
     {
+        _logs = await _context.Logs.ToListAsync();
+    }
+
+    private async Task CleanLogsAsync()
+    {
+        //Берем только уже полученные логи, вдруг появились новые, а их нельзя терять
+        _context.RemoveRange(_logs);
+        await _context.SaveChangesAsync();
+        
         _logs = await _context.Logs.ToListAsync();
     }
 }

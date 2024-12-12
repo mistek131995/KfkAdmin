@@ -22,30 +22,23 @@ public class DatabaseLogger : ILogger
         return logLevel >= LogLevel.Warning;
     }
 
-    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception, string> formatter)
     {
-        if (!IsEnabled(logLevel)) return;
+        if (!IsEnabled(logLevel)|| exception is null) return;
 
-        try
+        using var scope = _serviceProvider.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<SqLiteContext>();
+
+        var logEntry = new Log
         {
-            using var scope = _serviceProvider.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<SqLiteContext>();
+            Date = DateTime.UtcNow,
+            LogLevel = logLevel,
+            Message = exception?.Message ?? String.Empty,
+            Source = _categoryName,
+            StackTrace = exception?.StackTrace ?? String.Empty,
+        };
 
-            var logEntry = new Log
-            {
-                Date = DateTime.UtcNow,
-                LogLevel = logLevel,
-                Message = exception?.Message ?? String.Empty,
-                Source = _categoryName,
-                StackTrace = exception?.StackTrace ?? String.Empty,
-            };
-
-            dbContext.Logs.Add(logEntry);
-            dbContext.SaveChanges();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Ошибка записи лога: {ex.Message}");
-        }
+        dbContext.Logs.Add(logEntry);
+        dbContext.SaveChanges();
     }
 }

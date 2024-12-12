@@ -1,6 +1,6 @@
 <h3 class="mt-4">Партиции</h3>
 
-<EditForm class="d-flex" Model="filterModel" OnValidSubmit="LoadPartitionsAsync">
+<EditForm class="d-flex mb-1" Model="filterModel" OnValidSubmit="LoadPartitionsAsync">
     <div class="me-4 d-flex align-items-center">
         <label class="fw-bold text-nowrap me-2">Только партиции с сообщениями:</label>
         <InputCheckbox class="form-check" @bind-Value="filterModel.OnlyPartitionsWithMessage"/>
