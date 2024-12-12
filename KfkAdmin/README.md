@@ -1,12 +1,37 @@
-﻿## License
+﻿# KfkAdmin - UI for Apache Kafka
 
-This project is licensed under the MIT License with the Commons Clause.
+Kfkadmin - удобный графический интерфейс для администрирования и просмотра данных для Apache Kafka. Перед использование рекомендую ознакомиться с [лицензией](LICENSE).
 
-- The code is free to use for personal, educational, and non-commercial purposes.
-- Commercial use of the code is prohibited without explicit permission from the author.
+## Реализовано
 
-For commercial use, please contact
-- Email: mistek.dev@gmail.com 
+- Поддержка кластеров
+- Создание топиков
+- Переименование топиков
+- Редактирование кол-ва партиций
+- Отправка сообщений (JSON)
+- Чтение сообщений (JSON)
+- Вывод статистики (Кол-во сообщений, партиций, сообщений и тд)
+
+## В планах
+
+- Отправка сообщений (Protobuf)
+- Отправка сообщений (Avro)
+- Чтение сообщений (Protobuf)
+- Чтение сообщений (Avro)
+- Экспорт топиков
+- Импорт топиков
+- Настройки панели
+- Поддержка пользователей
+- Поддержка групп с разным уровнем доступа
+- Установка через Docker
+- Будет дополняться....
+
+## Использование
+
+Kfkadmin предназначена для бесплатного некоммерческого использования. Для использования в коммерческих целях - необходимо разрешение автора.
+
+- Email: mistek.dev@gmail.com
 - Telegram: https://t.me/ws_55555
 
-See the full license details in the [LICENSE](LICENSE) file.
+## Установка
+Инструкция будет чуть позже. В целом там нет ничего сложного.

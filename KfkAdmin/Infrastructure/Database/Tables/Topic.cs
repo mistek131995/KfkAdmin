@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace KfkAdmin.Infrastructure.Database.Tables;
 
-public class Topic
+public class TopicScheme
 {
     [Key]
     public string Name { get; set; }
