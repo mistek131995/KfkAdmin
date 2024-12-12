@@ -20,9 +20,9 @@
             <label>Формат сериализации:</label>
             <InputSelect class="form-select" @bind-Value="model.SerializeFormat">
                 <option value="json">JSON</option>
-                <option value="avro">Avro</option>
-                <option value="json">Protobuf</option>
-                <option value="binary">Бинарный</option>
+                <option value="avro" disabled="disabled">Avro</option>
+                <option value="json" disabled="disabled">Protobuf</option>
+                @*<option value="binary">Бинарный</option>*@
             </InputSelect>
         </div>
         
