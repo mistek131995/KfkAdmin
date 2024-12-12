@@ -11,9 +11,6 @@
     <TopicInfo Topic="_topic"/>
 }
 
-
-<SendMessageForm TopicName="@TopicName"/>
-
 <PartitionTable TopicName="@TopicName"/>
 
 <MessageTable TopicName="@TopicName" MessageCount="(_topic?.MessageCount ?? 0)"/>

@@ -27,7 +27,7 @@ public partial class PartitionTable : ComponentBase
         }
 
         //Если -1, отображаем все партиции и условие не должно выполняться
-        if (filterModel.Count < 0)
+        if (filterModel.Count > 0)
         {
             partitions = partitions.Take(filterModel.Count).ToList();
         }

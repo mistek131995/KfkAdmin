@@ -1,13 +1,13 @@
-<h3>PartitionTable</h3>
+<h3 class="mt-4">Партиции</h3>
 
-<EditForm class="d-flex justify-content-around" Model="filterModel" OnValidSubmit="LoadPartitionsAsync">
-    <div>
-        <label>Только партиции с сообщениями:</label>
-        <InputCheckbox @bind-Value="filterModel.OnlyPartitionsWithMessage"/>
+<EditForm class="d-flex" Model="filterModel" OnValidSubmit="LoadPartitionsAsync">
+    <div class="me-4 d-flex align-items-center">
+        <label class="fw-bold text-nowrap me-2">Только партиции с сообщениями:</label>
+        <InputCheckbox class="form-check" @bind-Value="filterModel.OnlyPartitionsWithMessage"/>
     </div>
-    <div>
-        <label>Кол-во партиций:</label>
-        <InputSelect bind-Value="filterModel.Count" TValue="int">
+    <div class="me-4 d-flex align-items-center">
+        <label class="fw-bold text-nowrap me-2">Кол-во партиций:</label>
+        <InputSelect class="form-select" @bind-Value="filterModel.Count" TValue="int">
             <option value="10">10</option>
             <option value="25">25</option>
             <option value="50">50</option>
@@ -15,12 +15,18 @@
             <option value="-1">Все</option>
         </InputSelect>
     </div>
+    <div>
+        <button type="submit" class="btn btn-primary">Применить</button>
+    </div>
 </EditForm>
 
 <table class="table table-bordered table-hover">
     <thead>
     <tr>
-        <th></th>
+        <th>Партиция</th>
+        <th>Минимальный отступ</th>
+        <th>Максимальный отступ</th>
+        <th>Кол-во сообщений</th>
     </tr>
     </thead>
     <tbody>
@@ -50,3 +56,5 @@
     }
     </tbody>
 </table>
+
+<hr/>
