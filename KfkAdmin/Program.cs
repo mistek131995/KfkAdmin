@@ -15,7 +15,8 @@ builder.Services.AddKafkaExtension();
 builder.Services.AddDbContext<SqLiteContext>(options =>
     options.UseSqlite("Data Source=./app.db;Mode=ReadWrite;"));
 
-builder.Services.AddTransient<ILogger, DatabaseLogger>();
+// Регистрация провайдера логгера
+builder.Services.AddSingleton<ILoggerProvider, DatabaseLoggerProvider>();
 
 SQLitePCL.Batteries.Init();
 

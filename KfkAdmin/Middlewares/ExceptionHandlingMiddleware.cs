@@ -10,11 +10,9 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
         }
         catch (Exception ex)
         {
-            // Логирование ошибки или возврат пользовательского ответа
+            logger.LogWarning(message: ex.Message, exception: ex);
             context.Response.StatusCode = 500;
             await context.Response.WriteAsync("Произошла ошибка: " + ex.Message);
-            
-            logger.LogError(ex.Message, ex);
         }
     }
 }

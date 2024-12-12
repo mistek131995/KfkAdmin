@@ -1,5 +1,22 @@
 <h3>PartitionTable</h3>
 
+<EditForm class="d-flex justify-content-around" Model="filterModel" OnValidSubmit="LoadPartitionsAsync">
+    <div>
+        <label>Только партиции с сообщениями:</label>
+        <InputCheckbox @bind-Value="filterModel.OnlyPartitionsWithMessage"/>
+    </div>
+    <div>
+        <label>Кол-во партиций:</label>
+        <InputSelect bind-Value="filterModel.Count" TValue="int">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="-1">Все</option>
+        </InputSelect>
+    </div>
+</EditForm>
+
 <table class="table table-bordered table-hover">
     <thead>
     <tr>

@@ -1,16 +1,23 @@
-using KfkAdmin.Infrastructure.Database;
+using Microsoft.Extensions.Logging;
 
 namespace KfkAdmin.Services.Logger;
 
-public class DatabaseLoggerProvider(SqLiteContext context) : ILoggerProvider
+public class DatabaseLoggerProvider : ILoggerProvider
 {
-    public void Dispose()
+    private readonly IServiceProvider _serviceProvider;
+
+    public DatabaseLoggerProvider(IServiceProvider serviceProvider)
     {
-        throw new NotImplementedException();
+        _serviceProvider = serviceProvider;
     }
 
     public ILogger CreateLogger(string categoryName)
     {
-        return new DatabaseLogger(context);
+        return new DatabaseLogger(_serviceProvider, categoryName);
+    }
+
+    public void Dispose()
+    {
+        // Освобождение ресурсов, если требуется
     }
 }
