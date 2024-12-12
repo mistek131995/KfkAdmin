@@ -3,3 +3,6 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
+.idea/*
+KfkAdmin.sln.DotSettings.user
+KfkAdmin/app.db
