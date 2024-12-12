@@ -1,0 +1,35 @@
+<h3>PartitionTable</h3>
+
+<table class="table table-bordered table-hover">
+    <thead>
+    <tr>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (_partitions is { Count: > 0 })
+    {
+        foreach (var partition in _partitions)
+        {
+            <tr>
+                <td>@partition.Id</td>
+                <td>@partition.MinOffset</td>
+                <td>@partition.MaxOffset</td>
+                <td>@(partition.MaxOffset - partition.MinOffset)</td>
+            </tr>
+        }
+    }
+    else if (_partitions is null)
+    {
+        <tr>
+            <td>Загружаем партиции</td>
+        </tr>
+    }
+    else
+    {
+        <tr>
+            <td>Партиции не найдены</td>
+        </tr>
+    }
+    </tbody>
+</table>
