@@ -49,6 +49,7 @@ public partial class SendMessageForm : ComponentBase
     {
         public string? Key { get; set; }
         [Required(ErrorMessage = "Сообщение обязательно к заполнению")]
+        public string Schema { get; set; } = String.Empty;
         public string Value { get; set; } = string.Empty;
         public string SerializeFormat { get; set; }
         public string? Headers { get; set; }

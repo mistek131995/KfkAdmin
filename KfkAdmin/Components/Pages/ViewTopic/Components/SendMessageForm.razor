@@ -26,6 +26,13 @@
             </InputSelect>
         </div>
         
+        @if (model.SerializeFormat == "avro")
+        {
+        <div>
+            <label>Схема:</label>
+            <InputTextArea class="form-control"  rows="6" @bind-Value="model.Schema"/>
+        </div>
+        }
         
         <div class="mb-2">
             <label>Полезная нагрузка:</label>
